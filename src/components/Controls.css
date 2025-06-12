@@ -1,0 +1,59 @@
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+}
+
+.control-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-btn {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: white;
+}
+
+/* Individual button colors */
+.control-btn.check {
+  background-color: #28a745;
+}
+
+.control-btn.check:hover {
+  background-color: #218838;
+}
+
+.control-btn.erase {
+  background-color: #dc3545;
+}
+
+.control-btn.erase:hover {
+  background-color: #c82333;
+}
+
+.control-btn.hint {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.control-btn.hint:hover {
+  background-color: #e0a800;
+}
+
+.control-item span {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}

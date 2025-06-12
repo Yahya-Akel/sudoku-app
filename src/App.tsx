@@ -1,11 +1,16 @@
-import React from 'react'
+import { Routes, Route } from 'react-router-dom';
+import PlayPage from './pages/PlayPage';
+import SolverPage from './pages/SolverPage';
 
 function App() {
   return (
-    <div>
-      <h1>Sudoku Game</h1>
-    </div>
-  )
+    <>
+      <Routes>
+        <Route path="/" element={<PlayPage />} />
+        <Route path="/solver" element={<SolverPage />} />
+      </Routes>
+    </>
+  );
 }
 
-export default App
+export default App;
