@@ -1,13 +1,13 @@
-// DifficultySelector.tsx
 import React from 'react';
 import './DifficultySelector.css';
+import type { Difficulty } from '../types';
 
 type DifficultySelectorProps = {
-  selected: string;
-  onSelect: (level: string) => void;
+  selected: Difficulty;
+  onSelect: (level: Difficulty) => void;
 };
 
-const levels = ['easy', 'medium', 'hard'];
+const levels: Difficulty[] = ['easy', 'medium', 'hard'];
 
 const DifficultySelector: React.FC<DifficultySelectorProps> = ({ selected, onSelect }) => {
   return (
@@ -20,7 +20,7 @@ const DifficultySelector: React.FC<DifficultySelectorProps> = ({ selected, onSel
             className={`difficulty-btn ${selected === level ? 'selected' : ''}`}
             onClick={() => onSelect(level)}
           >
-            {level}
+            {level.charAt(0).toUpperCase() + level.slice(1)}
           </button>
         ))}
       </div>

@@ -1,27 +1,33 @@
 import React from 'react';
 import './Controls.css';
-import { FaCheckCircle, FaEraser, FaLightbulb } from 'react-icons/fa';
+import { FaCheckCircle, FaEraser, FaRedo } from 'react-icons/fa';
 
-const Controls: React.FC = () => {
+type ControlsProps = {
+  onNewGame: () => void;
+  onCheck: () => void;
+  onErase: () => void;
+};
+
+const Controls: React.FC<ControlsProps> = ({ onNewGame, onCheck, onErase }) => {
   return (
     <div className="controls">
       <div className="control-item">
-        <button className="control-btn check">
+        <button className="control-btn check" onClick={onCheck}>
           <FaCheckCircle size={28} />
         </button>
         <span>Check</span>
       </div>
       <div className="control-item">
-        <button className="control-btn erase">
+        <button className="control-btn erase" onClick={onErase}>
           <FaEraser size={28} />
         </button>
         <span>Erase</span>
       </div>
       <div className="control-item">
-        <button className="control-btn hint">
-          <FaLightbulb size={28} />
+        <button className="control-btn new-game" onClick={onNewGame}>
+          <FaRedo size={28} />
         </button>
-        <span>Hint</span>
+        <span>New Game</span>
       </div>
     </div>
   );

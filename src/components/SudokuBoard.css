@@ -5,6 +5,7 @@
   background-color: #999;
   padding: 2px;
   border: 1px solid #333;
+  cursor: default;
 }
 
 .sudoku-row {
@@ -22,6 +23,7 @@
   outline: none;
   caret-color: transparent;
   font-family: 'Rubik', sans-serif;
+  cursor: default;
 }
 
 /* Selected & related styles */
@@ -37,6 +39,10 @@
 .sudoku-cell.fixed {
   font-weight: bold;
   color: #000;
+}
+
+.sudoku-cell.conflict {
+  background-color: #ffb1b1;
 }
 
 /* Thicker borders around 3x3 sections */
