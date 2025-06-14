@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import './SudokuBoard.css';
 import type { Cell, Grid } from '../types';
 import { checkConflicts } from '../lib/sudoku';
@@ -16,6 +16,10 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
   selectedCell,
   setSelectedCell,
 }) => {
+  const cellRefs = useRef<(HTMLInputElement | null)[][]>(
+    Array.from({ length: 9 }, () => Array(9).fill(null))
+  );
+
   const handleCellChange = (row: number, col: number, newValue: string) => {
     if (/^[1-9]?$/.test(newValue)) {
       const numericValue = newValue === '' ? 0 : parseInt(newValue, 10);
@@ -41,13 +45,55 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
     return inSameRow || inSameCol || inSameBox;
   };
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (!selectedCell) return;
+    const { row, col } = selectedCell;
+    let newRow = row;
+    let newCol = col;
+
+    switch (e.key) {
+      case 'ArrowUp':
+        newRow = (row + 8) % 9;
+        break;
+      case 'ArrowDown':
+        newRow = (row + 1) % 9;
+        break;
+      case 'ArrowLeft':
+        newCol = (col + 8) % 9;
+        break;
+      case 'ArrowRight':
+        newCol = (col + 1) % 9;
+        break;
+      default:
+        return;
+    }
+
+    setSelectedCell({ row: newRow, col: newCol });
+
+    // Delay focus until state updates
+    setTimeout(() => {
+      const input = cellRefs.current[newRow][newCol];
+      if (input && !input.readOnly) input.focus();
+    }, 0);
+
+    e.preventDefault();
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  });
+
   return (
     <div className="sudoku-board">
-      {grid.map((row) => (
-        <div className="sudoku-row" key={row[0].row}>
-          {row.map((cell) => (
+      {grid.map((row, rowIndex) => (
+        <div className="sudoku-row" key={rowIndex}>
+          {row.map((cell, colIndex) => (
             <input
               key={`${cell.row}-${cell.col}`}
+              ref={(el) => {
+                cellRefs.current[rowIndex][colIndex] = el;
+              }}
               className={`sudoku-cell 
                 ${cell.isFixed ? 'fixed' : ''}
                 ${selectedCell?.row === cell.row && selectedCell?.col === cell.col ? 'selected' : ''}
@@ -58,7 +104,9 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
               value={cell.value === 0 ? '' : cell.value.toString()}
               readOnly={cell.isFixed}
               onChange={(e) => handleCellChange(cell.row, cell.col, e.target.value)}
-              onClick={() => setSelectedCell({ row: cell.row, col: cell.col })}
+              onClick={() => {
+                setSelectedCell({ row: cell.row, col: cell.col });
+              }}
             />
           ))}
         </div>

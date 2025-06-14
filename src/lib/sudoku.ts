@@ -31,6 +31,8 @@ const isSafeToPlace = (grid: Grid, row: number, col: number, value: number): boo
   return true;
 };
 
+export { isSafeToPlace }; // shared logic
+
 // Fill grid using backtracking
 const fillGrid = (grid: Grid): boolean => {
   for (let row = 0; row < 9; row++) {

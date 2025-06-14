@@ -11,15 +11,18 @@ import {
   checkConflicts,
   isValidSudoku
 } from '../lib/sudoku';
+import { provideHint } from '../lib/solver';
 
 const PlayPage: React.FC = () => {
   const [difficulty, setDifficulty] = useState<Difficulty>('easy');
   const [grid, setGrid] = useState<Grid>([]);
+  const [solution, setSolution] = useState<Grid>([]);
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
 
   const createNewPuzzle = () => {
-    const { grid: newGrid } = generateSudokuPuzzle(difficulty);
+    const { grid: newGrid, solution: sol } = generateSudokuPuzzle(difficulty);
     setGrid(newGrid);
+    setSolution(sol);
     setSelectedCell(null);
   };
 
@@ -45,6 +48,16 @@ const PlayPage: React.FC = () => {
     );
     setGrid(erasedGrid);
     setSelectedCell(null);
+  };
+
+  const handleHint = () => {
+    const updated = grid.map(row => row.map(cell => ({ ...cell })));
+    const hintCell = provideHint(updated);
+    if (hintCell) {
+      setGrid(checkConflicts(updated));
+    } else {
+      alert('No more hints available!');
+    }
   };
 
   return (
@@ -79,6 +92,7 @@ const PlayPage: React.FC = () => {
               onNewGame={createNewPuzzle}
               onCheck={handleCheck}
               onErase={handleErase}
+              onHint={handleHint}
             />
           </div>
           <SudokuBoard
