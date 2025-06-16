@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import SudokuBoard from '../components/SudokuBoard';
 import DifficultySelector from '../components/DifficultySelector';
-import Controls from '../components/Controls';
-import './PlayPage.css';
+import Controls from '../components/PlayControls';
+import './page.css';
 import { FaBrain } from 'react-icons/fa';
 import type { Grid, Difficulty } from '../types';
 import {

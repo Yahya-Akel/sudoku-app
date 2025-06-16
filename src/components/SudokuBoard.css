@@ -37,7 +37,7 @@
 
 /* Fixed cell style */
 .sudoku-cell.fixed {
-  font-weight: bold;
+  font-weight: 400;
   color: #000;
 }
 
