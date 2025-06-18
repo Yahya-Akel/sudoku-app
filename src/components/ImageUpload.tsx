@@ -1,4 +1,3 @@
-// components/ImageUpload.tsx
 import React, { useEffect, useState } from 'react';
 import { extractSudokuGridFromImage } from '../lib/ocr';
 import type { Cell } from '../types';
@@ -48,9 +47,14 @@ const ImageUpload: React.FC<Props> = ({ onExtractGrid, resetTrigger }) => {
       </label>
 
       {!image && (
-        <div className="warning">
-          <p>Please choose a good quality</p>
-          <p>image with non bold font!</p>
+        <div className="instructions">
+          <p>📸 Upload a complete and high-quality image of the Sudoku grid.</p>
+          <ul>
+            <li>✅ Ensure all 81 cells are fully visible.</li>
+            <li>🎯 Use clear, sharp contrast between numbers and background.</li>
+            <li>✖ Avoid bold or stylized fonts.</li>
+            <li>🔲 Use black text on white background if possible.</li>
+          </ul>
         </div>
       )}
 
