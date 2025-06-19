@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import './SudokuBoard.css';
 import type { Cell, Grid } from '../types';
 import { checkConflicts } from '../lib/sudoku';
@@ -45,7 +45,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
     return inSameRow || inSameCol || inSameBox;
   };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (!selectedCell) return;
     const { row, col } = selectedCell;
     let newRow = row;
@@ -70,19 +70,18 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
 
     setSelectedCell({ row: newRow, col: newCol });
 
-    // Delay focus until state updates
     setTimeout(() => {
       const input = cellRefs.current[newRow][newCol];
       if (input && !input.readOnly) input.focus();
     }, 0);
 
     e.preventDefault();
-  };
+  }, [selectedCell, setSelectedCell]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  });
+  }, [handleKeyDown]);
 
   return (
     <div className="sudoku-board">
@@ -103,6 +102,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
               maxLength={1}
               value={cell.value === 0 ? '' : cell.value.toString()}
               readOnly={cell.isFixed}
+              aria-label={`Cell ${cell.row + 1}, ${cell.col + 1}`}
               onChange={(e) => handleCellChange(cell.row, cell.col, e.target.value)}
               onClick={() => {
                 setSelectedCell({ row: cell.row, col: cell.col });
@@ -115,4 +115,4 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({
   );
 };
 
-export default SudokuBoard;
+export default React.memo(SudokuBoard);

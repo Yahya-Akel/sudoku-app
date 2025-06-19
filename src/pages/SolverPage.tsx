@@ -6,6 +6,7 @@ import ImageUpload from '../components/ImageUpload';
 import SolverControls from '../components/SolverControls';
 import { generateEmptyGrid, checkConflicts } from '../lib/sudoku';
 import { solveSudoku, provideHint } from '../lib/solver';
+import { deepCloneGrid } from '../utils/utils';
 import type { Grid, Cell } from '../types';
 import './page.css';
 
@@ -13,7 +14,7 @@ const SolverPage: React.FC = () => {
   const [grid, setGrid] = useState<Grid>(generateEmptyGrid());
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
   const [solution, setSolution] = useState<Grid | null>(null);
-  const [resetCounter, setResetCounter] = useState(0); // for ImageUpload reset
+  const [resetCounter, setResetCounter] = useState(0);
 
   const handleSolve = () => {
     const checkedGrid = checkConflicts(grid);
@@ -42,28 +43,23 @@ const SolverPage: React.FC = () => {
       return;
     }
 
-    if (!solution) {
-      const newSolution = solveSudoku(grid);
-      if (!newSolution) {
-        alert("❌ No solution available yet. Cannot provide hint.");
+    let currentSolution = solution;
+
+    if (!currentSolution) {
+      currentSolution = solveSudoku(grid);
+      if (!currentSolution) {
+        alert("❌ No solution available. Cannot provide hint.");
         return;
       }
-      setSolution(newSolution);
-      const newGrid = grid.map(row => row.map(cell => ({ ...cell })));
-      const hintCell = provideHint(newGrid);
-      if (hintCell) {
-        setGrid(checkConflicts(newGrid));
-      } else {
-        alert("✅ All cells are filled.");
-      }
+      setSolution(currentSolution);
+    }
+
+    const cloned = deepCloneGrid(grid);
+    const hintCell = provideHint(cloned, currentSolution);
+    if (hintCell) {
+      setGrid(checkConflicts(cloned));
     } else {
-      const newGrid = grid.map(row => row.map(cell => ({ ...cell })));
-      const hintCell = provideHint(newGrid);
-      if (hintCell) {
-        setGrid(checkConflicts(newGrid));
-      } else {
-        alert("✅ All cells are filled.");
-      }
+      alert("✅ All cells are filled.");
     }
   };
 
@@ -71,7 +67,7 @@ const SolverPage: React.FC = () => {
     setGrid(generateEmptyGrid());
     setSelectedCell(null);
     setSolution(null);
-    setResetCounter(prev => prev + 1); // trigger image reset
+    setResetCounter(prev => prev + 1);
   };
 
   const handleImageGrid = (extracted: Cell[][]) => {
@@ -79,7 +75,6 @@ const SolverPage: React.FC = () => {
     setSelectedCell(null);
     setSolution(null);
   };
-
 
   return (
     <div className="play-page">
@@ -101,7 +96,6 @@ const SolverPage: React.FC = () => {
       </header>
 
       <h2 className="play-title">Sudoku Solver</h2>
-
       <h3 className="sub-title">Upload an image or enter game manually</h3>
 
       <ImageUpload onExtractGrid={handleImageGrid} resetTrigger={resetCounter} />
@@ -115,7 +109,6 @@ const SolverPage: React.FC = () => {
               onReset={handleReset}
             />
           </div>
-
           <SudokuBoard
             grid={grid}
             setGrid={setGrid}

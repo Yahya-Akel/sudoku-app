@@ -12,11 +12,12 @@ import {
   isValidSudoku
 } from '../lib/sudoku';
 import { provideHint } from '../lib/solver';
+import { deepCloneGrid } from '../utils/utils';
 
 const PlayPage: React.FC = () => {
   const [difficulty, setDifficulty] = useState<Difficulty>('easy');
   const [grid, setGrid] = useState<Grid>([]);
-  const [solution, setSolution] = useState<Grid>([]);
+  const [solution, setSolution] = useState<Grid | null>(null);
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
 
   const createNewPuzzle = () => {
@@ -34,10 +35,16 @@ const PlayPage: React.FC = () => {
     const checkedGrid = checkConflicts(grid);
     setGrid(checkedGrid);
 
+    const hasConflicts = checkedGrid.some(row => row.some(cell => cell.isConflict));
+    if (hasConflicts) {
+      alert('❌ The board has conflicts. Please resolve them first.');
+      return;
+    }
+
     const isValid = isValidSudoku(checkedGrid);
     alert(isValid
       ? '✅ Congratulations! Sudoku board is correctly solved.'
-      : '❌ The board has conflicts or is incomplete.');
+      : '❌ The board is incomplete or contains errors.');
   };
 
   const handleErase = () => {
@@ -51,12 +58,17 @@ const PlayPage: React.FC = () => {
   };
 
   const handleHint = () => {
-    const updated = grid.map(row => row.map(cell => ({ ...cell })));
-    const hintCell = provideHint(updated);
+    if (!solution) {
+      alert('⚠️ No solution available for hint.');
+      return;
+    }
+
+    const updated = deepCloneGrid(grid);
+    const hintCell = provideHint(updated, solution);
     if (hintCell) {
       setGrid(checkConflicts(updated));
     } else {
-      alert('No more hints available!');
+      alert('✅ All cells are filled or no hints available.');
     }
   };
 

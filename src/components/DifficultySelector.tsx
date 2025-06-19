@@ -19,6 +19,7 @@ const DifficultySelector: React.FC<DifficultySelectorProps> = ({ selected, onSel
             key={level}
             className={`difficulty-btn ${selected === level ? 'selected' : ''}`}
             onClick={() => onSelect(level)}
+            aria-label={`Select ${level} difficulty`}
           >
             {level.charAt(0).toUpperCase() + level.slice(1)}
           </button>
@@ -28,4 +29,4 @@ const DifficultySelector: React.FC<DifficultySelectorProps> = ({ selected, onSel
   );
 };
 
-export default DifficultySelector;
+export default React.memo(DifficultySelector);

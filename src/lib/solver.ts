@@ -1,24 +1,7 @@
 import type { Grid, Cell } from "../types";
+import { isSafeToPlace } from "./sudoku";
 
-// Checks if a value is safe to place
-const isSafeToPlace = (grid: Grid, row: number, col: number, value: number): boolean => {
-  for (let i = 0; i < 9; i++) {
-    if (grid[row][i].value === value || grid[i][col].value === value) return false;
-  }
-
-  const boxStartRow = Math.floor(row / 3) * 3;
-  const boxStartCol = Math.floor(col / 3) * 3;
-
-  for (let i = 0; i < 3; i++) {
-    for (let j = 0; j < 3; j++) {
-      if (grid[boxStartRow + i][boxStartCol + j].value === value) return false;
-    }
-  }
-
-  return true;
-};
-
-// Solves the board via backtracking
+// Solves the board and returns the solution grid (null if unsolvable)
 export const solveSudoku = (grid: Grid): Grid | null => {
   const copy = grid.map(row => row.map(cell => ({ ...cell })));
 
@@ -43,16 +26,16 @@ export const solveSudoku = (grid: Grid): Grid | null => {
   return solve() ? copy : null;
 };
 
-// Provide a single correct hint using the solver result
-export const provideHint = (grid: Grid): Cell | null => {
-  const solved = solveSudoku(grid);
-  if (!solved) return null;
-
+// Uses a precomputed solution to provide a hint
+export const provideHint = (
+  current: Grid,
+  solution: Grid
+): Cell | null => {
   for (let row = 0; row < 9; row++) {
     for (let col = 0; col < 9; col++) {
-      if (grid[row][col].value === 0) {
-        grid[row][col].value = solved[row][col].value;
-        return grid[row][col];
+      if (current[row][col].value === 0) {
+        current[row][col].value = solution[row][col].value;
+        return current[row][col];
       }
     }
   }
