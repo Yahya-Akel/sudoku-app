@@ -7,7 +7,7 @@ import SolverControls from '../components/SolverControls';
 import { generateEmptyGrid, checkConflicts } from '../lib/sudoku';
 import { solveSudoku, provideHint } from '../lib/solver';
 import { deepCloneGrid } from '../utils/utils';
-import type { Grid, Cell } from '../types';
+import type { Grid } from '../types';
 import './page.css';
 
 const SolverPage: React.FC = () => {
@@ -70,7 +70,7 @@ const SolverPage: React.FC = () => {
     setResetCounter(prev => prev + 1);
   };
 
-  const handleImageGrid = (extracted: Cell[][]) => {
+  const handleImageGrid = (extracted: Grid) => {
     setGrid(extracted);
     setSelectedCell(null);
     setSolution(null);
